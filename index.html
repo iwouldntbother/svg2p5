@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SVG 2 p5</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+      #siteContainer {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      textarea {
+        width: 50vw;
+        height: 20vh;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="siteContainer">
+      <h1>SVG code</h1>
+      <textarea id="svgInput">
+        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+        viewBox="0 0 1024 1024" style="enable-background:new 0 0 1024 1024;" xml:space="preserve">
+     <style type="text/css">
+       .st0{fill:#A2ADAF;stroke:#000000;stroke-width:13;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+       .st1{fill:#333335;}
+       .st2{fill:#F0ECE1;}
+       .st3{fill:none;stroke:#0000FF;stroke-width:120;stroke-miterlimit:10;}
+       .st4{fill:none;stroke:#F0ECE1;stroke-width:7;stroke-miterlimit:10;}
+       .st5{fill:#6D6D73;}
+       .st6{fill:none;stroke:#6D6D73;stroke-width:8;stroke-miterlimit:10;}
+       .st7{fill:none;stroke:#F0ECE1;stroke-width:2;stroke-miterlimit:10;}
+       .st8{fill:#1D1D1F;}
+       .st9{fill:none;stroke:#F0ECE1;stroke-width:0.75;stroke-miterlimit:10;}
+     </style>
+     <g id="Layer_2_00000129918330231430503910000016437622388292717224_">
+       <rect x="251" y="306.2" class="st0" width="522.1" height="411.6"/>
+       <circle class="st1" cx="456.8" cy="512" r="188.4"/>
+       <circle class="st2" cx="456.8" cy="512" r="66.3"/>
+       <circle class="st3" cx="456.8" cy="512" r="128.4"/>
+       <circle class="st1" cx="456.8" cy="512" r="5.8"/>
+       <circle class="st4" cx="695.7" cy="393.1" r="59.3"/>
+       <circle class="st1" cx="695.7" cy="393.1" r="30.7"/>
+       <circle class="st5" cx="695.7" cy="393.1" r="11.5"/>
+       <polyline class="st6" points="695.7,323.6 695.7,557.4 655.5,625.2 	"/>
+       <polygon class="st5" points="675.8,612.8 638,685.2 608.8,666.7 657.5,601.2 	"/>
+       <line class="st6" x1="665" y1="685.2" x2="636.3" y2="666.8"/>
+       <circle class="st1" cx="720.8" cy="589" r="18.4"/>
+       <circle class="st1" cx="720.8" cy="644.1" r="18.4"/>
+       <polygon class="st1" points="739.2,690.6 720.8,693.6 702.3,693.6 702.3,679.5 720.8,679.5 739.2,676.5 	"/>
+       <line class="st7" x1="732.2" y1="574.8" x2="726.3" y2="582.2"/>
+       <line class="st7" x1="738.8" y1="640.2" x2="729.5" y2="642.2"/>
+       <polygon class="st8" points="739.2,693.6 720.8,693.6 739.2,690.6 	"/>
+       <line class="st9" x1="706.5" y1="684.5" x2="706.5" y2="688.8"/>
+       <circle class="st9" cx="733.3" cy="684.2" r="2.2"/>
+       <rect x="686.8" y="318.8" class="st5" width="17.7" height="29.3"/>
+     </g>
+     </svg>
+        </textarea
+      >
+      <button id="convertBTN">Convert</button>
+      <h1>p5.js code</h1>
+      <textarea id="p5Output"></textarea>
+    </div>
+
+    <div id="hiddenTempDiv"></div>
+
+    <script src="./js/script.js"></script>
+  </body>
+</html>
