@@ -85,6 +85,55 @@ const getChildren = (el) => {
   }
 };
 
+const convertPath = (data) => {
+  let d = data.attributes.d.value;
+  let relD = Snap.path.toAbsolute(d);
+  console.log(relD.toString());
+  let shapeString = 'beginShape()\n';
+
+  for (let i = 0; i < relD.length; i++) {
+    if (relD[i][0] === 'V') {
+      relD[i][2] = relD[i][1];
+      relD[i][1] = relD[i - 1][1];
+    } else if (relD[i][0] === 'H') {
+      relD[i][2] = relD[i - 1][2];
+    }
+  }
+
+  for (let i = 0; i < relD.length; i++) {
+    switch (relD[i][0]) {
+      case 'M':
+        shapeString += `vertex(${relD[i][1]},${relD[i][2]})\n`;
+        break;
+      case 'L':
+        shapeString += `vertex(${relD[i][1]},${relD[i][2]})\n`;
+        break;
+      case 'C':
+        shapeString += `bezierVertex(${relD[i][1]},${relD[i][2]},${relD[i][3]},${relD[i][4]},${relD[i][5]},${relD[i][6]})\n`;
+        break;
+      case 'S':
+        shapeString += `quadraticVertex(${relD[i][1]},${relD[i][2]},${relD[i][3]},${relD[i][4]})\n`;
+        break;
+      case 'Z':
+        shapeString += 'endShape(CLOSE)\n';
+        break;
+      case 'H':
+        shapeString += `vertex(${relD[i][1]},${relD[i][2]})\n`;
+        break;
+      case 'V':
+        shapeString += `vertex(${relD[i][1]},${relD[i][2]})\n`;
+        break;
+      default:
+        break;
+    }
+  }
+  if (shapeString.includes('endShape')) {
+    return shapeString;
+  } else {
+    return (shapeString += 'endShape()\n');
+  }
+};
+
 const convertLine = (data) => {
   let x1 = data.attributes.x1.value;
   let y1 = data.attributes.y1.value;
@@ -98,24 +147,24 @@ const convertPolygon = (data) => {
   let points = data.attributes.points.value.split(' \t')[0];
   points = points.split(' ');
 
-  let vertecies = '';
+  let vertices = '';
   points.forEach((point) => {
-    vertecies += 'vertex(' + point + ')\n';
+    vertices += 'vertex(' + point + ')\n';
   });
 
-  return 'beginShape()\n' + vertecies + 'endShape(CLOSE)\n';
+  return 'beginShape()\n' + vertices + 'endShape(CLOSE)\n';
 };
 
 const convertPolyline = (data) => {
   let points = data.attributes.points.value.split(' \t')[0];
   points = points.split(' ');
 
-  let vertecies = '';
+  let vertices = '';
   points.forEach((point) => {
-    vertecies += 'vertex(' + point + ')\n';
+    vertices += 'vertex(' + point + ')\n';
   });
 
-  return 'beginShape()\n' + vertecies + 'endShape()\n';
+  return 'beginShape()\n' + vertices + 'endShape()\n';
 };
 
 const convertRect = (data) => {
@@ -169,12 +218,14 @@ const svg2p5 = () => {
   let convertedp5Data = '';
 
   for (let i = 0; i < childrenGlobal.length; i++) {
-    console.log(childrenGlobal[i].classList[0]);
+    // console.log(childrenGlobal[i].classList[0]);
     convertedp5Data += 'push()\n';
-    convertedp5Data +=
-      currentStyleList[
-        styleClassList.indexOf('.' + childrenGlobal[i].classList[0])
-      ] + '\n';
+    if (childrenGlobal[i].classList[0]) {
+      convertedp5Data +=
+        currentStyleList[
+          styleClassList.indexOf('.' + childrenGlobal[i].classList[0])
+        ] + '\n';
+    }
     switch (childrenGlobal[i].localName) {
       case 'rect':
         convertedp5Data += convertRect(childrenGlobal[i]);
@@ -191,6 +242,8 @@ const svg2p5 = () => {
       case 'line':
         convertedp5Data += convertLine(childrenGlobal[i]);
         break;
+      case 'path':
+        convertedp5Data += convertPath(childrenGlobal[i]);
       default:
         break;
     }

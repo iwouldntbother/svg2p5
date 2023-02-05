@@ -11,10 +11,11 @@ Currently it can convert:
 - Line to Line
 - Polygon to Shape (CLOSED)
 - Polyline to Shape (OPEN)
+- Path to shape (early/broken) [M,L,C,S,Z,H,V]
 
 To add in the future:
 
-- Path to Shape
+- ~~Path to Shape~~
 - Linear Gradient
 
 Styles that work:
