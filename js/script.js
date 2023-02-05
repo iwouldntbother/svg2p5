@@ -7,6 +7,8 @@ document.querySelector('#convertBTN').addEventListener('click', () => {
 
 document.querySelector('#svgInput').addEventListener('input', (e) => {
   document.querySelector('#hiddenTempDiv').innerHTML = e.target.value;
+  let svgCont = document.getElementById('svgCont');
+  svgCont.innerHTML = e.target.value;
 });
 
 const hasChildren = (el) => {
@@ -32,6 +34,12 @@ const convertStyle = () => {
     if (!allStyles.sheet.rules[i].cssText.includes('stroke')) {
       convertedStyles[i] += 'noStroke()\n';
     }
+
+    let opacityValue;
+    if (allStyles.sheet.rules[i].cssText.includes('opacity')) {
+      opacityValue = allStyles.sheet.rules[i].style['opacity'];
+    }
+
     for (let j = 0; j < allStyles.sheet.rules[i].style.length; j++) {
       currentStyles[i][j] = { name: '', value: '' };
       currentStyles[i][j].name = allStyles.sheet.rules[i].style[j];
@@ -44,10 +52,17 @@ const convertStyle = () => {
 
       switch (name) {
         case 'fill':
-          value === 'none'
-            ? (convertedStyles[i] += 'noFill()\n')
-            : (convertedStyles[i] +=
-                'fill(' + value.replace('rgb(', '').replace(')', '') + ')\n');
+          if (value === 'none') {
+            convertedStyles[i] += 'noFill()\n';
+          } else if (opacityValue) {
+            convertedStyles[i] += `fill('rgba(${value
+              .replace('rgb(', '')
+              .replace(')', '')},${opacityValue})')\n`;
+          } else {
+            convertedStyles[i] += `fill(${value
+              .replace('rgb(', '')
+              .replace(')', '')})\n`;
+          }
           break;
         case 'stroke':
           value === 'none'
@@ -87,19 +102,28 @@ const getChildren = (el) => {
 
 const convertPath = (data) => {
   let d = data.attributes.d.value;
+  // Convert path to absolute values
   let relD = Snap.path.toAbsolute(d);
-  console.log(relD.toString());
   let shapeString = 'beginShape()\n';
 
+  // Pre format data for certain points
   for (let i = 0; i < relD.length; i++) {
     if (relD[i][0] === 'V') {
       relD[i][2] = relD[i][1];
-      relD[i][1] = relD[i - 1][1];
+      relD[i][1] = relD[i - 1][relD[i - 1].length - 2];
     } else if (relD[i][0] === 'H') {
-      relD[i][2] = relD[i - 1][2];
+      relD[i][2] = relD[i - 1][relD[i - 1].length - 1];
+    } else if (relD[i][0] === 'S') {
+      relD[i][6] = relD[i][4];
+      relD[i][5] = relD[i][3];
+      relD[i][4] = relD[i][2];
+      relD[i][3] = relD[i][1];
+      relD[i][1] = 2 * relD[i - 1][5] - relD[i - 1][3];
+      relD[i][2] = 2 * relD[i - 1][6] - relD[i - 1][4];
     }
   }
 
+  // Convert each svg path type to p5 vertices
   for (let i = 0; i < relD.length; i++) {
     switch (relD[i][0]) {
       case 'M':
@@ -112,10 +136,13 @@ const convertPath = (data) => {
         shapeString += `bezierVertex(${relD[i][1]},${relD[i][2]},${relD[i][3]},${relD[i][4]},${relD[i][5]},${relD[i][6]})\n`;
         break;
       case 'S':
-        shapeString += `quadraticVertex(${relD[i][1]},${relD[i][2]},${relD[i][3]},${relD[i][4]})\n`;
-        break;
-      case 'Z':
-        shapeString += 'endShape(CLOSE)\n';
+        shapeString += `bezierVertex(
+        ${relD[i][1]},
+        ${relD[i][2]},
+        ${relD[i][3]},
+        ${relD[i][4]},
+        ${relD[i][5]},
+        ${relD[i][6]})\n`;
         break;
       case 'H':
         shapeString += `vertex(${relD[i][1]},${relD[i][2]})\n`;
@@ -123,10 +150,14 @@ const convertPath = (data) => {
       case 'V':
         shapeString += `vertex(${relD[i][1]},${relD[i][2]})\n`;
         break;
+      case 'Z':
+        shapeString += 'endShape(CLOSE)\n';
+        break;
       default:
         break;
     }
   }
+  // End shape without close if 'Z' svg tag isn't present
   if (shapeString.includes('endShape')) {
     return shapeString;
   } else {
@@ -250,4 +281,30 @@ const svg2p5 = () => {
     convertedp5Data += 'pop()\n';
   }
   p5Output.value = convertedp5Data;
+  loadp5(450, 450, convertedp5Data);
+};
+
+const loadp5 = (width, height, draw) => {
+  let visHolder = document.getElementById('p5Vis');
+
+  let script = document.createElement('script');
+  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.min.js';
+
+  visHolder.contentWindow.document.body.appendChild(script);
+
+  let p5code = document.createElement('script');
+  p5code.innerHTML = `function setup() {\ncreateCanvas(${width},${height});\n}\n function draw() {\nbackground(255);\n${draw}\n}`;
+
+  visHolder.contentWindow.document.body.appendChild(p5code);
+
+  let test = document.createElement('h1');
+  test.innerHTML = 'test text';
+  // visHolder.contentWindow.document.body.appendChild(test);
+
+  // document.getElementById('p5Vis').innerHTML +=
+  //   '<html><body><script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.min.js"></script>';
+  // document.getElementById(
+  //   'p5Vis'
+  // ).innerHTML += `<script>function setup() {createCanvas(${width},${height});} function draw(){background(255);${draw}}</script>`;
+  // document.getElementById('p5Vis').innerHTML += '</body></html>';
 };

@@ -11,12 +11,11 @@ Currently it can convert:
 - Line to Line
 - Polygon to Shape (CLOSED)
 - Polyline to Shape (OPEN)
-- Path to shape (early/broken) [M,L,C,S,Z,H,V]
+- Path to shape [M,L,C,S,Z,H,V]
 
-To add in the future:
+No support:
 
-- ~~Path to Shape~~
-- Linear Gradient
+- Linear Gradient (SVG gradients work between two points, p5.js doesn't offer this function)
 
 Styles that work:
 
@@ -24,3 +23,4 @@ Styles that work:
 - Stroke/noStroke
 - StrokeWeight
 - StrokeCap (Square/Round)
+- Alpha/Opacity on fill
