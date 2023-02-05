@@ -4,12 +4,13 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SVG 2 p5</title>
+    <title>SVG to p5.js Converter</title>
     <style>
       body {
         margin: 0;
         padding: 0;
         overflow: hidden;
+        font-family: Arial, Helvetica, sans-serif;
       }
       #siteContainer {
         width: 100vw;
@@ -19,9 +20,14 @@
         justify-content: center;
         align-items: center;
       }
+      h1 {
+        margin-bottom: 0;
+      }
       textarea {
         width: 50vw;
         height: 40vh;
+        resize: none;
+        font-family: monospace;
       }
       iframe {
         width: 40vh;
@@ -40,20 +46,35 @@
         display: flex;
         flex-direction: row;
       }
+      #buttonHolder {
+        width: calc(50vw + 40vh);
+        display: flex;
+        flex-direction: row;
+        justify-content: baseline;
+        align-items: baseline;
+      }
+      button {
+        padding: 1vw 2vw;
+        background-color: green;
+        color: white;
+        border: none;
+      }
     </style>
   </head>
   <body>
     <div id="siteContainer">
       <div id="svgHolder">
         <div>
-          <h1>SVG code</h1>
+          <h1>SVG Code</h1>
           <textarea id="svgInput" placeholder="Paste SVG code here"></textarea>
         </div>
         <div id="svgCont"></div>
       </div>
-      <button id="convertBTN">Convert</button>
+      <div id="buttonHolder">
+        <button id="convertBTN">Convert</button>
+      </div>
       <div id="p5Holder">
-        <h1>p5.js code</h1>
+        <h1>p5.js Code</h1>
         <textarea
           id="p5Output"
           placeholder="p5.js code will be here"
